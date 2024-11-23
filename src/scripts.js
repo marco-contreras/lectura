@@ -38,7 +38,7 @@ function getDistribution(year) {
     }
 
     let saturdays = array.filter(day => day.dayOfWeek === 6);
-    let index = 0;
+    let index = date.getDay() === 1 ? 1 : 0;
 
     while (remainingChapters > 0 && index < saturdays.length) {
         saturdays[index].elements += 1;
