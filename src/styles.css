@@ -70,11 +70,11 @@ body {
     margin-left: 10px;
 }
 
-column-push-pad-higt {
+.column-push-pad-higt {
     padding-left: 10px;
 }
 
-column-push-pad-low {
+.column-push-pad-low {
     padding-left: 4px;
 }
 
