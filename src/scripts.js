@@ -155,7 +155,9 @@ document.getElementById('generateButton').addEventListener('click', () => {
         if (monthDays.length > 0) {
             const monthColumn = document.createElement('div');
             monthColumn.classList.add('month-column');
-            if ([3, 9].includes(month)) monthColumn.classList.add('column-push');
+            if ([3, 9].includes(month)) monthColumn.classList.add('column-push-mar-higt');
+            if ([4, 10].includes(month)) monthColumn.classList.add('column-push-pad-higt');
+            if ([5, 11].includes(month)) monthColumn.classList.add('column-push-pad-low');
 
             const monthTitle = document.createElement('div');
             monthTitle.classList.add('month-title');
