@@ -58,6 +58,7 @@ body {
     flex: 0 0 calc(16.6667% - 10px);
     box-sizing: border-box;
     padding: 0;
+	margin-bottom: -1px;
 }
 
 .column-container {
@@ -75,7 +76,8 @@ body {
 }
 
 .column-push-pad-low {
-    padding-left: 4px;
+    margin-left: -4px;
+    flex: 0 0 calc(17% - 10px);
 }
 
 .month-title {
@@ -86,7 +88,8 @@ body {
     text-align: center;
     border-radius: 5px;
     margin: 0 4pt;
-    padding: 1pt 8pt;
+    padding: 1pt 12pt 3pt 12pt;
+	vertical-align: middle;
     font-size: 9pt;
     display: inline;
 }
@@ -101,10 +104,19 @@ body {
     padding: 0;
 }
 
+.initial-item{
+    margin-top: 4px;
+}
+	
+
 .mark-check {
     display: inline;
-    font-size: 9pt;
     color: black;
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+    vertical-align: baseline;
+    line-height: 0px;
 }
 
 .day-text {
