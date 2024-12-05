@@ -18,11 +18,20 @@ function getDistribution(year) {
         const dayOfWeek = date.getDay();
         let elements = ELEMENTS_PER_DAY;
 
-        if (dayOfWeek === 3 || dayOfWeek === 0) {
+        if (
+			dayOfWeek === 3 || //Wenesday 
+			dayOfWeek === 0 || //saturday
+			(date.getDate() === 1 && date.getMonth() === 0) //Juanuary 1st.
+		) {
             elements = 1;
-        } else if (date.getDate() === 1 && date.getMonth() === 0) {
-            elements = 1;
-        } else if (date.getDate() === 24 && date.getMonth() === 11) {
+        } else if (
+			(date.getDate() === 24 && date.getMonth() === 11) ||
+			(date.getDate() === 29 && date.getMonth() === 8) ||
+			(date.getDate() === 4 && date.getMonth() === 9) ||
+			(date.getDate() === 5 && date.getMonth() === 9) ||
+			(date.getDate() === 6 && date.getMonth() === 9) ||
+			(date.getDate() === 26 && date.getMonth() === 10)
+		) {
             elements = 3;
         }
         remainingChapters -= elements;
@@ -164,9 +173,14 @@ document.getElementById('generateButton').addEventListener('click', () => {
             monthTitle.textContent = new Date(0, month - 1).toLocaleString('es-MX', {month: 'long'});
             monthColumn.appendChild(monthTitle);
 
+			let initialItem = true;
             for (const day of monthDays) {
                 const readingItem = document.createElement('div');
                 readingItem.classList.add('reading-item');
+				if(initialItem){
+					readingItem.classList.add('initial-item');
+					initialItem = false;
+				}
 
                 const dayText = document.createElement('span');
                 dayText.classList.add('day-text');
