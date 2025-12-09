@@ -145,12 +145,45 @@ document.getElementById('generateButton').addEventListener('click', () => {
     const titleCard = document.createElement('div');
     titleCard.classList.add('card', 'p-4', 'general-card', 'title-card');
 
+    const titleWrapper = document.createElement('div');
+    titleWrapper.style.display = 'flex';
+    titleWrapper.style.justifyContent = 'space-between';
+    titleWrapper.style.alignItems = 'center';
+    titleWrapper.style.gap = '10px';
+
     const titleText = document.createElement('h4');
+	titleText.style.marginLeft = "9px"
     titleText.innerText = "Plan de Lectura Biblica " + selectedYear;
-    titleCard.appendChild(titleText);
+    titleWrapper.appendChild(titleText);
+
+    const colorMessage = document.createElement('span');
+    colorMessage.textContent = "Cambiar color del fondo:";
+    colorMessage.style.fontSize = "0.9rem";
+    colorMessage.style.marginRight = "6px";
+	colorMessage.style.fontWeight = "bold";
+
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.value = '#F0FFFF';
+    colorPicker.title = 'Cambiar color de fondo';
+    colorPicker.style.cursor = 'pointer';
 
     const planningCard = document.createElement('div');
     planningCard.classList.add('card', 'p-4', 'general-card', 'planning-card');
+    planningCard.style.backgroundColor = colorPicker.value;
+
+    colorPicker.addEventListener('input', (e) => {
+        planningCard.style.backgroundColor = e.target.value;
+    });
+
+    const colorContainer = document.createElement('div');
+    colorContainer.style.display = 'flex';
+    colorContainer.style.alignItems = 'center';
+    colorContainer.appendChild(colorMessage);
+    colorContainer.appendChild(colorPicker);
+
+    titleWrapper.appendChild(colorContainer);
+    titleCard.appendChild(titleWrapper);
 
     const downloadCard = document.createElement('div');
     downloadCard.classList.add('card', 'p-4', 'general-card', 'download-card');
@@ -173,14 +206,14 @@ document.getElementById('generateButton').addEventListener('click', () => {
             monthTitle.textContent = new Date(0, month - 1).toLocaleString('es-MX', {month: 'long'});
             monthColumn.appendChild(monthTitle);
 
-			let initialItem = true;
+            let initialItem = true;
             for (const day of monthDays) {
                 const readingItem = document.createElement('div');
                 readingItem.classList.add('reading-item');
-				if(initialItem){
-					readingItem.classList.add('initial-item');
-					initialItem = false;
-				}
+                if(initialItem){
+                    readingItem.classList.add('initial-item');
+                    initialItem = false;
+                }
 
                 const dayText = document.createElement('span');
                 dayText.classList.add('day-text');
