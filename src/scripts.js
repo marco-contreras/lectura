@@ -3,6 +3,56 @@ const MAX_YEAR = 2100;
 const TOTAL_CHAPTERS = 1189;
 const ELEMENTS_PER_DAY = 4;
 
+const bibleBooks = [
+	{name: "Gn", chapters: 50}, {name: "Ex", chapters: 40}, {name: "Lv", chapters: 27},
+    {name: "Nm", chapters: 36}, {name: "Dt", chapters: 34}, {name: "Jos", chapters: 24},
+    {name: "Jue", chapters: 21}, {name: "Rt", chapters: 4}, {name: "1S", chapters: 31},
+    {name: "2S", chapters: 24}, {name: "1R", chapters: 22}, {name: "2R", chapters: 25},
+    {name: "1Cr", chapters: 29}, {name: "2Cr", chapters: 36}, {name: "Esd", chapters: 10},
+    {name: "Neh", chapters: 13}, {name: "Est", chapters: 10}, {name: "Job", chapters: 42},
+    {name: "Sal", chapters: 150}, {name: "Pr", chapters: 31}, {name: "Ec", chapters: 12},
+    {name: "Cnt", chapters: 8}, {name: "Is", chapters: 66}, {name: "Jer", chapters: 52},
+    {name: "Lam", chapters: 5}, {name: "Ez", chapters: 48}, {name: "Dan", chapters: 12},
+    {name: "Os", chapters: 14}, {name: "Jl", chapters: 3}, {name: "Am", chapters: 9},
+    {name: "Abd", chapters: 1}, {name: "Jon", chapters: 4}, {name: "Miq", chapters: 7},
+    {name: "Nah", chapters: 3}, {name: "Hab", chapters: 3}, {name: "Sof", chapters: 3},
+    {name: "Hag", chapters: 2}, {name: "Zac", chapters: 14}, {name: "Mal", chapters: 4},
+    {name: "Mt", chapters: 28}, {name: "Mr", chapters: 16}, {name: "Lc", chapters: 24},
+    {name: "Jn", chapters: 21}, {name: "Hch", chapters: 28}, {name: "Ro", chapters: 16},
+    {name: "1Co", chapters: 16}, {name: "2Co", chapters: 13}, {name: "Gl", chapters: 6},
+    {name: "Ef", chapters: 6}, {name: "Flp", chapters: 4}, {name: "Col", chapters: 4},
+    {name: "1Ts", chapters: 5}, {name: "2Ts", chapters: 3}, {name: "1Ti", chapters: 6},
+    {name: "2Ti", chapters: 4}, {name: "Tit", chapters: 3}, {name: "Flm", chapters: 1},
+    {name: "Heb", chapters: 13}, {name: "Stg", chapters: 5}, {name: "1P", chapters: 5},
+    {name: "2P", chapters: 3}, {name: "1Jn", chapters: 5}, {name: "2Jn", chapters: 1},
+    {name: "3Jn", chapters: 1}, {name: "Jud", chapters: 1}, {name: "Ap", chapters: 22},
+];
+
+const bibleBooksNT = [
+    {name: "Mt", chapters: 28}, {name: "Mr", chapters: 16}, {name: "Lc", chapters: 24},
+    {name: "Jn", chapters: 21}, {name: "Hch", chapters: 28}, {name: "Ro", chapters: 16},
+    {name: "1Co", chapters: 16}, {name: "2Co", chapters: 13}, {name: "Gl", chapters: 6},
+    {name: "Ef", chapters: 6}, {name: "Flp", chapters: 4}, {name: "Col", chapters: 4},
+    {name: "1Ts", chapters: 5}, {name: "2Ts", chapters: 3}, {name: "1Ti", chapters: 6},
+    {name: "2Ti", chapters: 4}, {name: "Tit", chapters: 3}, {name: "Flm", chapters: 1},
+    {name: "Heb", chapters: 13}, {name: "Stg", chapters: 5}, {name: "1P", chapters: 5},
+    {name: "2P", chapters: 3}, {name: "1Jn", chapters: 5}, {name: "2Jn", chapters: 1},
+    {name: "3Jn", chapters: 1}, {name: "Jud", chapters: 1}, {name: "Ap", chapters: 22},
+    {name: "Gn", chapters: 50}, {name: "Ex", chapters: 40}, {name: "Lv", chapters: 27},
+    {name: "Nm", chapters: 36}, {name: "Dt", chapters: 34}, {name: "Jos", chapters: 24},
+    {name: "Jue", chapters: 21}, {name: "Rt", chapters: 4}, {name: "1S", chapters: 31},
+    {name: "2S", chapters: 24}, {name: "1R", chapters: 22}, {name: "2R", chapters: 25},
+    {name: "1Cr", chapters: 29}, {name: "2Cr", chapters: 36}, {name: "Esd", chapters: 10},
+    {name: "Neh", chapters: 13}, {name: "Est", chapters: 10}, {name: "Job", chapters: 42},
+    {name: "Sal", chapters: 150}, {name: "Pr", chapters: 31}, {name: "Ec", chapters: 12},
+    {name: "Cnt", chapters: 8}, {name: "Is", chapters: 66}, {name: "Jer", chapters: 52},
+    {name: "Lam", chapters: 5}, {name: "Ez", chapters: 48}, {name: "Dan", chapters: 12},
+    {name: "Os", chapters: 14}, {name: "Jl", chapters: 3}, {name: "Am", chapters: 9},
+    {name: "Abd", chapters: 1}, {name: "Jon", chapters: 4}, {name: "Miq", chapters: 7},
+    {name: "Nah", chapters: 3}, {name: "Hab", chapters: 3}, {name: "Sof", chapters: 3},
+    {name: "Hag", chapters: 2}, {name: "Zac", chapters: 14}, {name: "Mal", chapters: 4},
+];
+
 document.addEventListener('DOMContentLoaded', () => {
     const yearPicker = document.getElementById('yearPicker');
     yearPicker.value = new Date().getFullYear() + 1;
@@ -58,32 +108,8 @@ function getDistribution(year) {
     return array;
 }
 
-function generatePlan(distribution) {
-    const bibleBooks = [
-        {name: "Gn", chapters: 50}, {name: "Ex", chapters: 40}, {name: "Lv", chapters: 27},
-        {name: "Nm", chapters: 36}, {name: "Dt", chapters: 34}, {name: "Jos", chapters: 24},
-        {name: "Jue", chapters: 21}, {name: "Rt", chapters: 4}, {name: "1S", chapters: 31},
-        {name: "2S", chapters: 24}, {name: "1R", chapters: 22}, {name: "2R", chapters: 25},
-        {name: "1Cr", chapters: 29}, {name: "2Cr", chapters: 36}, {name: "Esd", chapters: 10},
-        {name: "Neh", chapters: 13}, {name: "Est", chapters: 10}, {name: "Job", chapters: 42},
-        {name: "Sal", chapters: 150}, {name: "Pr", chapters: 31}, {name: "Ec", chapters: 12},
-        {name: "Cnt", chapters: 8}, {name: "Is", chapters: 66}, {name: "Jer", chapters: 52},
-        {name: "Lam", chapters: 5}, {name: "Ez", chapters: 48}, {name: "Dan", chapters: 12},
-        {name: "Os", chapters: 14}, {name: "Jl", chapters: 3}, {name: "Am", chapters: 9},
-        {name: "Abd", chapters: 1}, {name: "Jon", chapters: 4}, {name: "Miq", chapters: 7},
-        {name: "Nah", chapters: 3}, {name: "Hab", chapters: 3}, {name: "Sof", chapters: 3},
-        {name: "Hag", chapters: 2}, {name: "Zac", chapters: 14}, {name: "Mal", chapters: 4},
-        {name: "Mt", chapters: 28}, {name: "Mr", chapters: 16}, {name: "Lc", chapters: 24},
-        {name: "Jn", chapters: 21}, {name: "Hch", chapters: 28}, {name: "Ro", chapters: 16},
-        {name: "1Co", chapters: 16}, {name: "2Co", chapters: 13}, {name: "Gl", chapters: 6},
-        {name: "Ef", chapters: 6}, {name: "Flp", chapters: 4}, {name: "Col", chapters: 4},
-        {name: "1Ts", chapters: 5}, {name: "2Ts", chapters: 3}, {name: "1Ti", chapters: 6},
-        {name: "2Ti", chapters: 4}, {name: "Tit", chapters: 3}, {name: "Flm", chapters: 1},
-        {name: "Heb", chapters: 13}, {name: "Stg", chapters: 5}, {name: "1P", chapters: 5},
-        {name: "2P", chapters: 3}, {name: "1Jn", chapters: 5}, {name: "2Jn", chapters: 1},
-        {name: "3Jn", chapters: 1}, {name: "Jud", chapters: 1}, {name: "Ap", chapters: 22},
-    ];
-
+function generatePlan(distribution, bibleBooks) {
+	
     let currentBookIndex = 0;
     let currentChapter = 1;
     const planning = [];
@@ -135,7 +161,11 @@ document.getElementById('generateButton').addEventListener('click', () => {
 
     generatedCardContainer.innerHTML = '';
     const distribution = getDistribution(selectedYear);
-    const planning = generatePlan(distribution);
+	
+    const startPicker = document.getElementById('startPicker').value;
+	const selectedBooks = (startPicker === "NT") ? bibleBooksNT : bibleBooks;
+	
+	const planning = generatePlan(distribution, selectedBooks);
 
     if (!planning.length) {
         console.error("No se pudo generar el plan.");
@@ -307,3 +337,4 @@ document.getElementById('generateButton').addEventListener('click', () => {
     generatedCardContainer.appendChild(planningCard);
     generatedCardContainer.appendChild(downloadCard);
 });
+
