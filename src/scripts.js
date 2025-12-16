@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     yearPicker.value = new Date().getFullYear() + 1;
 });
 
-function getDistribution(year) {
+function getDistribution(year, isNT) {
     const array = [];
     let remainingChapters = TOTAL_CHAPTERS;
     let date = new Date(year, 0, 1);
@@ -74,16 +74,25 @@ function getDistribution(year) {
 			(date.getDate() === 1 && date.getMonth() === 0) //Juanuary 1st.
 		) {
             elements = 1;
-        } else if (
-			(date.getDate() === 24 && date.getMonth() === 11) ||
-			(date.getDate() === 29 && date.getMonth() === 8) ||
-			(date.getDate() === 4 && date.getMonth() === 9) ||
-			(date.getDate() === 5 && date.getMonth() === 9) ||
-			(date.getDate() === 6 && date.getMonth() === 9) ||
-			(date.getDate() === 26 && date.getMonth() === 10)
-		) {
-            elements = 3;
-        }
+        } else {
+			if(isNT){
+				if (
+				(date.getDate() === 4 && date.getMonth() === 2) ||
+				(date.getDate() === 18 && date.getMonth() === 11) ||
+				(date.getDate() === 19 && date.getMonth() === 11) 
+				) {
+					elements = 3;
+				}
+			}else{
+				if (
+				(date.getDate() === 29 && date.getMonth() === 8) ||
+				(date.getDate() === 5 && date.getMonth() === 9) ||
+				(date.getDate() === 26 && date.getMonth() === 10) 
+				) {
+					elements = 3;
+				}
+			}
+		}
         remainingChapters -= elements;
 
         array.push({
@@ -95,6 +104,8 @@ function getDistribution(year) {
 
         date.setDate(date.getDate() + 1);
     }
+	
+	console.log(array);
 
     let saturdays = array.filter(day => day.dayOfWeek === 6);
     let index = date.getDay() === 1 ? 1 : 0;
@@ -104,12 +115,11 @@ function getDistribution(year) {
         remainingChapters--;
         index++;
     }
-
+	console.log(remainingChapters, saturdays);
     return array;
 }
 
 function generatePlan(distribution, bibleBooks) {
-	
     let currentBookIndex = 0;
     let currentChapter = 1;
     const planning = [];
@@ -117,10 +127,16 @@ function generatePlan(distribution, bibleBooks) {
     for (const day of distribution) {
         let chaptersToRead = day.elements;
         const readings = [];
+        let booksUsedToday = 0; // contador de libros distintos en el día
 
         while (chaptersToRead > 0) {
             const book = bibleBooks[currentBookIndex];
             const chaptersLeft = book.chapters - currentChapter + 1;
+
+            // Si ya usamos 3 libros en este día, paramos y dejamos lo pendiente para mañana
+            if (booksUsedToday >= 3) {
+                break;
+            }
 
             if (chaptersToRead <= chaptersLeft) {
                 let endChapter = currentChapter + chaptersToRead - 1;
@@ -130,16 +146,33 @@ function generatePlan(distribution, bibleBooks) {
                 chaptersToRead = 0;
             } else {
                 if (currentChapter <= book.chapters) {
-                    let textChapter = (currentChapter === book.chapters) ? currentChapter : currentChapter + '-' + book.chapters;
+                    let textChapter = (currentChapter === book.chapters) ? currentChapter : `${currentChapter}-${book.chapters}`;
                     readings.push(`${book.name}. ${textChapter}`);
                 }
                 chaptersToRead -= chaptersLeft;
                 currentChapter = 1;
                 currentBookIndex++;
             }
+
+            booksUsedToday++; // cada vez que tocamos un libro nuevo, lo contamos
         }
 
-        planning.push({month: day.month, day: day.day, dayOfWeek: day.dayOfWeek, readings: readings.join(", ")});
+        planning.push({
+            month: day.month,
+            day: day.day,
+            dayOfWeek: day.dayOfWeek,
+            readings: readings.join(", ")
+        });
+
+        // Si quedaron capítulos pendientes porque se pasó el límite de libros,
+        // los devolvemos al "saldo" del siguiente día
+        if (chaptersToRead > 0) {
+            day.elements = day.elements - chaptersToRead; // este día se queda con lo que sí se pudo
+            const nextDayIndex = distribution.indexOf(day) + 1;
+            if (nextDayIndex < distribution.length) {
+                distribution[nextDayIndex].elements += chaptersToRead;
+            }
+        }
     }
 
     return planning;
@@ -160,11 +193,12 @@ document.getElementById('generateButton').addEventListener('click', () => {
     }
 
     generatedCardContainer.innerHTML = '';
-    const distribution = getDistribution(selectedYear);
-	
+    
     const startPicker = document.getElementById('startPicker').value;
-	const selectedBooks = (startPicker === "NT") ? bibleBooksNT : bibleBooks;
+	const isNT = (startPicker === "NT");
 	
+	const selectedBooks = (isNT) ? bibleBooksNT : bibleBooks;
+	const distribution = getDistribution(selectedYear, isNT);
 	const planning = generatePlan(distribution, selectedBooks);
 
     if (!planning.length) {
@@ -337,4 +371,3 @@ document.getElementById('generateButton').addEventListener('click', () => {
     generatedCardContainer.appendChild(planningCard);
     generatedCardContainer.appendChild(downloadCard);
 });
-
