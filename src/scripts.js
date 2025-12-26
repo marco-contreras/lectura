@@ -72,6 +72,7 @@ function getDistribution(year, isNT) {
 			dayOfWeek === 3 || //Wenesday 
 			dayOfWeek === 0 || //saturday
 			(date.getDate() === 1 && date.getMonth() === 0) //Juanuary 1st.
+			(date.getDate() === 31 && date.getMonth() === 11) //Juanuary 1st.
 		) {
             elements = 1;
         } else {
@@ -371,3 +372,4 @@ document.getElementById('generateButton').addEventListener('click', () => {
     generatedCardContainer.appendChild(planningCard);
     generatedCardContainer.appendChild(downloadCard);
 });
+
