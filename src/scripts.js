@@ -71,8 +71,8 @@ function getDistribution(year, isNT) {
         if (
 			dayOfWeek === 3 || //Wenesday 
 			dayOfWeek === 0 || //saturday
-			(date.getDate() === 1 && date.getMonth() === 0) //Juanuary 1st.
-			(date.getDate() === 31 && date.getMonth() === 11) //Juanuary 1st.
+			(date.getDate() === 1 && date.getMonth() === 0) || //First day of the year.
+			(date.getDate() === 31 && date.getMonth() === 11) //Last day of the year.
 		) {
             elements = 1;
         } else {
@@ -372,4 +372,5 @@ document.getElementById('generateButton').addEventListener('click', () => {
     generatedCardContainer.appendChild(planningCard);
     generatedCardContainer.appendChild(downloadCard);
 });
+
 
