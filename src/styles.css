@@ -131,6 +131,10 @@ body {
     color: #45B0E1;
 }
 
+.day-spetial {
+    font-weight: 900;
+}
+
 .download-btn {
     position: absolute;
     bottom: 18px;
