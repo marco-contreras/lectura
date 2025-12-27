@@ -1,7 +1,39 @@
-const MIN_YEAR = 2000;
-const MAX_YEAR = 2100;
+const MIN_YEAR = 2026;
+const MAX_YEAR = 2050;
 const TOTAL_CHAPTERS = 1189;
 const ELEMENTS_PER_DAY = 4;
+const OLD_T = 0;
+const NEW_T = 1;
+const BOTH_T = 2;
+
+const generalDaysToReadOne = [0, 3];
+
+const generalExceptionDays = [
+	{month: 0, day: 1, chapters: 1, testament: BOTH_T},
+	{month: 11, day: 31, chapters: 1, testament: BOTH_T},
+	
+	{month: 11, day: 24, chapters: 0, testament: BOTH_T}, 
+	{month: 11, day: 25, chapters: 0, testament: BOTH_T},
+
+	{month: 11, day: 16, chapters: 3, testament: NEW_T},
+	{month: 11, day: 17, chapters: 3, testament: NEW_T}, 	
+];
+
+const customExceptionDays = [
+	{year: 2026, month: 11, day: 30, chapters: 4, testament: BOTH_T}, 
+	{year: 2029, month: 11, day: 30, chapters: 4, testament: BOTH_T}, 
+    {year: 2035, month: 11, day: 30, chapters: 4, testament: BOTH_T}, 
+    {year: 2037, month: 11, day: 30, chapters: 4, testament: BOTH_T}, 	
+    {year: 2040, month: 11, day: 30, chapters: 4, testament: BOTH_T}, 	
+    {year: 2043, month: 11, day: 30, chapters: 4, testament: BOTH_T},
+    {year: 2046, month: 11, day: 30, chapters: 4, testament: BOTH_T},  
+    
+    {year: 2035, month: 11, day: 22, chapters: 3, testament: BOTH_T}, 	
+
+    {year: 2033, month: 11, day: 31, chapters: 0, testament: NEW_T},  
+    {year: 2039, month: 11, day: 31, chapters: 0, testament: NEW_T},  
+    {year: 2050, month: 11, day: 31, chapters: 0, testament: NEW_T},  
+];
 
 const bibleBooks = [
 	{name: "Gn", chapters: 50}, {name: "Ex", chapters: 40}, {name: "Lv", chapters: 27},
@@ -26,6 +58,7 @@ const bibleBooks = [
     {name: "Heb", chapters: 13}, {name: "Stg", chapters: 5}, {name: "1P", chapters: 5},
     {name: "2P", chapters: 3}, {name: "1Jn", chapters: 5}, {name: "2Jn", chapters: 1},
     {name: "3Jn", chapters: 1}, {name: "Jud", chapters: 1}, {name: "Ap", chapters: 22},
+	{name: "ERROR", chapters: 900},
 ];
 
 const bibleBooksNT = [
@@ -51,7 +84,12 @@ const bibleBooksNT = [
     {name: "Abd", chapters: 1}, {name: "Jon", chapters: 4}, {name: "Miq", chapters: 7},
     {name: "Nah", chapters: 3}, {name: "Hab", chapters: 3}, {name: "Sof", chapters: 3},
     {name: "Hag", chapters: 2}, {name: "Zac", chapters: 14}, {name: "Mal", chapters: 4},
+	{name: "ERROR", chapters: 900},
 ];
+
+function isChristmasExternal(date) {
+    return date.getMonth() === 11 && (date.getDate() === 24 || date.getDate() === 25);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const yearPicker = document.getElementById('yearPicker');
@@ -61,63 +99,120 @@ document.addEventListener('DOMContentLoaded', () => {
 function getDistribution(year, isNT) {
     const array = [];
     let remainingChapters = TOTAL_CHAPTERS;
-    let date = new Date(year, 0, 1);
+    let startDate = new Date(year, 0, 1);
+	let currentDate = new Date(startDate);
     const lastDayOfYear = new Date(year, 11, 31);
 
-    while (date <= lastDayOfYear) {
-        const dayOfWeek = date.getDay();
-        let elements = ELEMENTS_PER_DAY;
-
-        if (
-			dayOfWeek === 3 || //Wenesday 
-			dayOfWeek === 0 || //saturday
-			(date.getDate() === 1 && date.getMonth() === 0) || //First day of the year.
-			(date.getDate() === 31 && date.getMonth() === 11) //Last day of the year.
-		) {
-            elements = 1;
-        } else {
-			if(isNT){
-				if (
-				(date.getDate() === 4 && date.getMonth() === 2) ||
-				(date.getDate() === 18 && date.getMonth() === 11) ||
-				(date.getDate() === 19 && date.getMonth() === 11) 
-				) {
-					elements = 3;
-				}
-			}else{
-				if (
-				(date.getDate() === 29 && date.getMonth() === 8) ||
-				(date.getDate() === 5 && date.getMonth() === 9) ||
-				(date.getDate() === 26 && date.getMonth() === 10) 
-				) {
-					elements = 3;
-				}
-			}
-		}
-        remainingChapters -= elements;
+    while (currentDate <= lastDayOfYear) {
+        const dayOfWeek = currentDate.getDay();
+        let elements = getElementsToRead(currentDate, isNT);
+		remainingChapters -= elements;
 
         array.push({
-            month: date.getMonth() + 1,
-            day: date.getDate(),
+            month: currentDate.getMonth() + 1,
+            day: currentDate.getDate(),
             dayOfWeek,
             elements
         });
 
-        date.setDate(date.getDate() + 1);
+        currentDate.setDate(currentDate.getDate() + 1);
     }
 	
+	console.log("-- First Distribution: ");
 	console.log(array);
+	console.log("Remaining Elements: ");
+	console.log(remainingChapters);
 
+	//Adding a extra day on Saturdays.
+	console.log("Info: " + startDate);
+	
     let saturdays = array.filter(day => day.dayOfWeek === 6);
-    let index = date.getDay() === 1 ? 1 : 0;
+    let index = startDate.getDay() === 1 ? 1 : 0;
 
     while (remainingChapters > 0 && index < saturdays.length) {
         saturdays[index].elements += 1;
         remainingChapters--;
         index++;
     }
-	console.log(remainingChapters, saturdays);
+	
+	console.log("-- Second Distribution: ");
+	console.log(array);
+	console.log("Remaining Elements: ");
+	console.log(remainingChapters);
+	
+	if(remainingChapters > 0){	
+		let availableDays = isNT? 
+		array.filter(day => day.dayOfWeek === 5 && day.month === 9):
+		array.filter(day => day.dayOfWeek === 5 && day.month === 6);
+				
+		let index = startDate.getDay() === 5 ? 1 : 0;
+
+		while (remainingChapters > 0 && index < availableDays.length) {
+			availableDays[index].elements += 1;
+			remainingChapters--;
+			index++;
+		}
+		
+		console.log("-- Third Distribution: ");
+		console.log(array);
+	    console.log("Remaining Elements: ");
+	    console.log(remainingChapters);
+	}
+	
+	if(remainingChapters > 0){	
+		let availableDays = isNT? 
+		array.filter(day => day.dayOfWeek === 4 && day.month === 9):
+		array.filter(day => day.dayOfWeek === 4 && day.month === 6);
+				
+		let index = startDate.getDay() === 4 ? 1 : 0;
+
+		while (remainingChapters > 0 && index < availableDays.length) {
+			availableDays[index].elements += 1;
+			remainingChapters--;
+			index++;
+		}
+		
+		console.log("-- Fourth Distribution: ");
+		console.log(array);
+	    console.log("Remaining Elements: ");
+	    console.log(remainingChapters);
+	}
     return array;
+}
+
+function getElementsToRead(date, isNT){
+	let currentTestament = isNT? NEW_T : OLD_T; 
+
+	/**Channel 1************************/
+	const customExceptionDay = customExceptionDays.find(
+		e => e.year === date.getFullYear() 
+		&& e.month === date.getMonth() 
+		&& e.day === date.getDate()
+		&& (e.testament === BOTH_T || e.testament === currentTestament)
+	);
+	
+	if(customExceptionDay){
+		return customExceptionDay.chapters;
+	}
+	
+	/**Channel 2************************/
+	const generalExceptionDay = generalExceptionDays.find(
+		e => e.month === date.getMonth() 
+		&& e.day === date.getDate()
+		&& (e.testament === BOTH_T || e.testament === currentTestament)
+	);
+	
+	if(generalExceptionDay){
+		return generalExceptionDay.chapters;
+	}
+	
+	/**Channel 3************************/
+	if(generalDaysToReadOne.includes(date.getDay())){
+		return 1;
+	}
+	
+	/**Channel 4************************/
+	return ELEMENTS_PER_DAY;
 }
 
 function generatePlan(distribution, bibleBooks) {
@@ -258,7 +353,7 @@ document.getElementById('generateButton').addEventListener('click', () => {
 
     for (let month = 1; month <= 12; month++) {
         const monthDays = planning.filter(day => day.month === month);
-
+		
         if (monthDays.length > 0) {
             const monthColumn = document.createElement('div');
             monthColumn.classList.add('month-column');
@@ -272,7 +367,7 @@ document.getElementById('generateButton').addEventListener('click', () => {
             monthColumn.appendChild(monthTitle);
 
             let initialItem = true;
-            for (const day of monthDays) {
+            for (const day of monthDays) {							
                 const readingItem = document.createElement('div');
                 readingItem.classList.add('reading-item');
                 if(initialItem){
@@ -284,8 +379,21 @@ document.getElementById('generateButton').addEventListener('click', () => {
                 dayText.classList.add('day-text');
                 if (day.dayOfWeek === 3) dayText.classList.add('day-wednesday');
                 if (day.dayOfWeek === 0) dayText.classList.add('day-sunday');
-
-                dayText.innerHTML = `<div class="mark-check">&#x25AD;</div> <strong>${day.day} ${day.readings}</strong>`;
+				
+				let sniped = "";
+				if((month === 1 && day.day === 1) || (month === 12 && day.day === 31)){
+					sniped = 'class="day-spetial"';
+				}
+				
+				if((month === 12 && day.day === 24)){
+					day.readings = "Mt. 1-2";
+				}
+				
+				if((month === 12 && day.day === 25)){
+					day.readings = "Lc. 1-2";
+				}
+				
+                dayText.innerHTML = `<div class="mark-check">&#x25AD;</div> <strong ${sniped}>${day.day} ${day.readings}</strong>`;
                 readingItem.appendChild(dayText);
                 monthColumn.appendChild(readingItem);
             }
@@ -347,7 +455,7 @@ document.getElementById('generateButton').addEventListener('click', () => {
             currentRow = 0;
         }
 
-        console.log(excelData);
+        //console.log(excelData);
 
         const workbook = XLSX.utils.book_new();
         const worksheet = XLSX.utils.aoa_to_sheet(excelData);
@@ -372,5 +480,3 @@ document.getElementById('generateButton').addEventListener('click', () => {
     generatedCardContainer.appendChild(planningCard);
     generatedCardContainer.appendChild(downloadCard);
 });
-
-
